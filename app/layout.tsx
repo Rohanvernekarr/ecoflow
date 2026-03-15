@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Outfit, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Navbar } from "@/components/Navbar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
 });
 
@@ -13,11 +14,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ecoflow",
-  description: "Ecoflow",
+  title: "EcoYaan",
+  description: "Experience EcoYaan.",
+  keywords: ["eco-friendly", "sustainability", "shopping", "checkout"],
 };
-
-import { Navbar } from "@/components/Navbar";
 
 export default function RootLayout({
   children,
@@ -27,10 +27,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${outfit.variable} ${geistMono.variable} antialiased bg-gray-50 text-slate-900 selection:bg-brand-500 selection:text-white`}
       >
+        <div className="fixed inset-0 pointer-events-none" />
         <Navbar />
-        <main className="min-h-[calc(100vh-4rem)] bg-gray-50">
+        <main className="min-h-[calc(100vh-4rem)]">
           {children}
         </main>
       </body>

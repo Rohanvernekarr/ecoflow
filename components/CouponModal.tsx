@@ -13,7 +13,7 @@ export function CouponModal({ onClose }: { onClose: () => void }) {
   const { applyCoupon, appliedCoupon } = useCheckoutStore();
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center text-gray-800 bg-black/50 p-4">
+    <div className="fixed inset-0 z-500 flex items-center justify-center text-gray-800 bg-black/50 p-4">
       <div className="bg-white rounded-xl w-full max-w-sm overflow-hidden shadow-xl">
         <div className="flex justify-between items-center p-4 border-b">
           <h3 className="font-bold text-lg">Apply Coupon</h3>

@@ -33,14 +33,14 @@ export function OrderSummary({
 
   return (
     <>
-      <div className="glass shadow-sm rounded-[2rem] p-6 lg:p-8 sticky top-24 z-100 text-slate-800 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-        <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+      <div className=" shadow-sm rounded-3xl md:rounded-[2rem] p-5 md:p-6 lg:p-8 sticky top-24 z-100 text-slate-800 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+        <h2 className="text-lg md:text-xl font-bold text-slate-900 mb-4 md:mb-6 flex items-center gap-2">
           Order Summary
         </h2>
         
-        <div className="mb-6 space-y-3">
+        <div className="mb-4 md:mb-6 space-y-2 md:space-y-3">
           {cartItems.map((item) => (
-            <div key={item.product_id} className="flex justify-between text-sm text-slate-500 font-medium">
+            <div key={item.product_id} className="flex justify-between text-xs md:text-sm text-slate-500 font-medium">
               <span className="truncate pr-4 text-slate-600">{item.product_name}</span>
               <span className="shrink-0 font-bold text-slate-700">× {item.quantity}</span>
             </div>
@@ -88,15 +88,15 @@ export function OrderSummary({
           </div>
         )}
 
-        <div className="space-y-4 text-slate-600 mb-8">
-          <div className="flex justify-between text-sm">
+        <div className="space-y-3 md:space-y-4 text-slate-600 mb-6 md:mb-8 text-sm md:text-base">
+          <div className="flex justify-between">
             <span>Subtotal</span>
             <span className="font-semibold text-slate-800">₹{subtotal}</span>
           </div>
           
-          <div className="flex justify-between text-sm">
+          <div className="flex justify-between">
             <span>Shipping</span>
-            <span className="font-semibold text-slate-800">{shippingFee === 0 ? <span className="text-brand-600 uppercase text-xs tracking-wider">Free</span> : `₹${shippingFee}`}</span>
+            <span className="font-semibold text-slate-800">{shippingFee === 0 ? <span className="text-brand-600 uppercase text-[10px] md:text-xs tracking-wider">Free</span> : `₹${shippingFee}`}</span>
           </div>
 
           {discountApplied > 0 && (
@@ -113,30 +113,30 @@ export function OrderSummary({
             </div>
           )}
 
-          <div className="border-t border-slate-200/60 pt-6 mt-6 flex justify-between items-end">
+          <div className="border-t border-slate-200/60 pt-4 md:pt-6 mt-4 md:mt-6 flex justify-between items-end">
             <div>
-              <span className="block text-sm font-medium text-slate-500 mb-1">Total Amount</span>
-              <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Incl. of all taxes</p>
+              <span className="block text-xs md:text-sm font-medium text-slate-500 mb-0.5 md:mb-1">Total Amount</span>
+              <p className="text-[9px] md:text-[10px] text-slate-400 uppercase tracking-widest font-bold">Incl. of all taxes</p>
             </div>
-            <span className="font-black text-3xl text-slate-900 tracking-tight">₹{grandTotal}</span>
+            <span className="font-black text-2xl md:text-3xl text-slate-900 tracking-tight">₹{grandTotal}</span>
           </div>
         </div>
 
         {buttonLabel && onAction && (
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             <button
               onClick={onAction}
               disabled={isActionDisabled || subtotal === 0}
-              className="w-full relative group overflow-hidden bg-slate-900 hover:bg-black disabled:bg-slate-300 text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-[0.98] focus:ring-4 focus:ring-slate-900/20"
+              className="w-full relative group overflow-hidden bg-slate-900 hover:bg-black disabled:bg-slate-300 text-white font-bold py-3 md:py-4 rounded-xl shadow-lg transition-all active:scale-[0.98] focus:ring-4 focus:ring-slate-900/20"
             >
               <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-brand-600 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="absolute inset-0 w-full h-full from-white/20 to-transparent bg-gradient-to-b opacity-0 group-hover:opacity-100" />
-              <span className="relative flex items-center justify-center gap-2 uppercase tracking-widest text-sm">
+              <span className="relative flex items-center justify-center gap-2 uppercase tracking-widest text-xs md:text-sm">
                 {buttonLabel}
               </span>
             </button>
-            <div className="flex items-center justify-center gap-1.5 text-xs text-slate-500 font-medium">
-              <ShieldCheck className="w-4 h-4 text-brand-500" />
+            <div className="flex items-center justify-center gap-1.5 text-[10px] md:text-xs text-slate-500 font-medium">
+              <ShieldCheck className="w-3 h-3 md:w-4 md:h-4 text-brand-500" />
               Secure encrypted checkout
             </div>
           </div>

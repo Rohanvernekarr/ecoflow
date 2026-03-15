@@ -37,6 +37,7 @@ interface CheckoutState {
   lastOrder: {
     cartItems: CartItem[];
     shippingAddress: ShippingAddress;
+    paymentMethod: string;
     shippingFee: number;
     discountApplied: number;
     subtotal: number;
@@ -130,6 +131,7 @@ export const useCheckoutStore = create<CheckoutState>()(
           lastOrder: {
             cartItems: [...state.cartItems],
             shippingAddress: { ...state.shippingAddress },
+            paymentMethod: state.selectedPaymentMethod,
             shippingFee: state.shippingFee,
             discountApplied: state.discountApplied,
             subtotal: state.getSubtotal(),

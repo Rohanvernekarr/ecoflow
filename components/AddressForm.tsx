@@ -92,15 +92,15 @@ export function AddressForm({
 
   return (
     <div className="glass rounded-[2rem] shadow-sm p-6 md:p-10 text-slate-800 animate-fade-in-up">
-      <div className="flex justify-between items-start mb-10 pb-6 border-b border-slate-200/50">
+      <div className="flex justify-between items-start mb-8 md:mb-10 pb-4 md:pb-6 border-b border-slate-200/50">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-3">
-            <div className="bg-brand-100/50 p-2.5 rounded-xl">
-              <MapPin className="w-6 h-6 text-brand-600" />
+          <h2 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2 md:gap-3">
+            <div className="bg-brand-100/50 p-2 md:p-2.5 rounded-xl">
+              <MapPin className="w-5 h-5 md:w-6 md:h-6 text-brand-600" />
             </div>
             {initialData ? "Edit Address" : "New Address"}
           </h2>
-          <p className="text-sm text-slate-500 mt-2">Please provide your precise delivery details for a smooth drop-off.</p>
+          <p className="text-xs md:text-sm text-slate-500 mt-1.5 md:mt-2">Please provide your precise delivery details for a smooth drop-off.</p>
         </div>
         {onCancel && (
           <button 
@@ -232,17 +232,17 @@ export function AddressForm({
           </div>
         </div>
 
-        <div className="space-y-4 pt-2">
-          <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-2">
+        <div className="space-y-3 md:space-y-4 pt-2">
+          <label className="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest ml-2">
             Address Type
           </label>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2 md:gap-3">
             {["Home", "Work", "Other"].map((type) => (
               <button
                 key={type}
                 type="button"
                 onClick={() => setValue("addressType", type as any, { shouldValidate: true })}
-                className={`px-8 py-3 rounded-2xl text-sm font-bold transition-all border-2 ${
+                className={`px-6 md:px-8 py-2 md:py-3 rounded-xl md:rounded-2xl text-xs md:text-sm font-bold transition-all border-2 ${
                   selectedType === type 
                     ? "bg-brand-600 border-brand-600 text-white shadow-lg shadow-brand-200 scale-[1.02]" 
                     : "bg-white border-slate-200 text-slate-500 hover:border-brand-300 hover:text-brand-600 hover:bg-brand-50/50"
@@ -254,15 +254,15 @@ export function AddressForm({
           </div>
         </div>
 
-        <div className="pt-8 flex gap-4 border-t border-slate-200/50">
+        <div className="pt-6 md:pt-8 flex gap-4 border-t border-slate-200/50">
           <button
             type="submit"
             disabled={!isValid}
-            className="w-full relative group overflow-hidden bg-slate-900 hover:bg-black disabled:bg-slate-300 text-white font-bold py-5 rounded-2xl shadow-lg transition-all active:scale-[0.98] focus:ring-4 focus:ring-slate-900/20"
+            className="w-full relative group overflow-hidden bg-slate-900 hover:bg-black disabled:bg-slate-300 text-white font-bold py-4 md:py-5 rounded-xl md:rounded-2xl shadow-lg transition-all active:scale-[0.98] focus:ring-4 focus:ring-slate-900/20"
           >
             <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-brand-600 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 disabled:opacity-0" />
             <div className="absolute inset-0 w-full h-full from-white/20 to-transparent bg-gradient-to-b opacity-0 group-hover:opacity-100" />
-            <span className="relative flex items-center justify-center gap-2 uppercase tracking-widest text-sm">
+            <span className="relative flex items-center justify-center gap-2 uppercase tracking-widest text-xs md:text-sm">
               {initialData ? "Save Changes" : "Save & Deliver Here"}
             </span>
           </button>

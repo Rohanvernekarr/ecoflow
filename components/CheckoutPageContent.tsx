@@ -110,13 +110,13 @@ export function CheckoutPageContent() {
               }} 
             />
           ) : (
-            <div className="glass rounded-[2rem] shadow-sm p-6 md:p-10 transition-all hover:shadow-md">
-              <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-200/50">
-                <div className="flex items-center gap-3">
+            <div className="glass rounded-3xl md:rounded-[2rem] shadow-sm p-4 md:p-8 transition-all hover:shadow-md">
+              <div className="flex items-center justify-between mb-4 md:mb-8 pb-3 md:pb-4 border-b border-slate-200/50">
+                <div className="flex items-center gap-2 md:gap-3">
                   <div className="p-2 bg-brand-100 text-brand-600 rounded-xl">
-                    <MapPin className="w-6 h-6" />
+                    <MapPin className="w-5 h-5 md:w-6 md:h-6" />
                   </div>
-                  <h2 className="text-2xl font-bold text-slate-800 tracking-tight">
+                  <h2 className="text-xl md:text-2xl font-bold text-slate-800 tracking-tight">
                     Delivery Address
                   </h2>
                 </div>
@@ -125,55 +125,55 @@ export function CheckoutPageContent() {
                     setEditingAddress(null);
                     setShowNewForm(true);
                   }}
-                  className="px-5 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-brand-600 transition-all flex items-center gap-2 shadow-lg shadow-slate-200 active:scale-[0.98]"
+                  className="px-4 md:px-5 py-2 md:py-2.5 bg-slate-900 text-white rounded-xl text-xs md:text-sm font-bold hover:bg-brand-600 transition-all flex items-center gap-1.5 md:gap-2 shadow-lg shadow-slate-200 active:scale-[0.98]"
                 >
-                  <Plus className="w-4 h-4" /> Add New
+                  <Plus className="w-4 h-4" /> <span className="hidden sm:inline">Add New</span><span className="inline sm:hidden">Add</span>
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                 {savedAddresses.map((address) => (
                   <div
                     key={address.id}
                     onClick={() => setSelectedAddressId(address.id!)}
-                    className={`group relative p-6 border-2 rounded-2xl cursor-pointer transition-all duration-300 ${
+                    className={`group relative p-4 md:p-6 border-2 rounded-xl md:rounded-2xl cursor-pointer transition-all duration-300 ${
                       selectedAddressId === address.id
-                        ? "border-brand-500 bg-brand-50/50 ring-4 ring-brand-50/50 shadow-md shadow-brand-100/50 transform scale-[1.02]"
+                        ? "border-brand-500 bg-brand-50/50 ring-2 md:ring-4 ring-brand-50/50 shadow-md shadow-brand-100/50 transform scale-[1.02]"
                         : "border-slate-200/60 hover:border-brand-300 bg-white/60 hover:bg-white/90 hover:shadow-sm"
                     }`}
                   >
                     <div className="flex flex-col h-full">
-                      <div className="flex items-center justify-between mb-5">
-                        <span className={`text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest transition-colors ${
+                      <div className="flex items-center justify-between mb-4 md:mb-5">
+                        <span className={`text-[9px] md:text-[10px] font-black px-2 md:px-2.5 py-0.5 md:py-1 rounded-full uppercase tracking-widest transition-colors ${
                            selectedAddressId === address.id ? "bg-brand-600 text-white" : "bg-slate-200 text-slate-500"
                         }`}>
                           {address.addressType || "Home"}
                         </span>
-                        <div className="flex gap-2">
+                        <div className="flex gap-1 md:gap-2">
                           <button 
                             onClick={(e) => handleEditAddress(e, address)}
-                            className={`p-1.5 rounded-lg border transition-all shadow-sm ${selectedAddressId === address.id ? 'bg-white/80 border-brand-200 text-brand-600 hover:bg-brand-50' : 'bg-white border-slate-200 text-slate-400 hover:text-brand-600 hover:border-brand-200 opacity-0 group-hover:opacity-100'}`}
+                            className={`p-1.5 rounded-lg border transition-all shadow-sm ${selectedAddressId === address.id ? 'bg-white/80 border-brand-200 text-brand-600 hover:bg-brand-50' : 'bg-white border-slate-200 text-slate-400 hover:text-brand-600 hover:border-brand-200 opacity-100 sm:opacity-0 group-hover:opacity-100'}`}
                           >
-                          <Edit className="w-5 h-5" />
+                          <Edit className="w-4 h-4 md:w-5 md:h-5" />
                           </button>
                           <button 
                             onClick={(e) => handleDeleteAddress(e, address.id!)}
-                            className={`p-1.5 rounded-lg border transition-all shadow-sm ${selectedAddressId === address.id ? 'bg-white/80 border-red-200 text-red-500 hover:bg-red-50' : 'bg-white border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 opacity-0 group-hover:opacity-100'}`}
+                            className={`p-1.5 rounded-lg border transition-all shadow-sm ${selectedAddressId === address.id ? 'bg-white/80 border-red-200 text-red-500 hover:bg-red-50' : 'bg-white border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 opacity-100 sm:opacity-0 group-hover:opacity-100'}`}
                           >
                             <X className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       </div>
 
-                      <p className="font-bold text-slate-800 text-lg tracking-tight mb-1">{address.fullName}</p>
-                      <p className="text-sm text-slate-500 font-medium leading-relaxed mb-6">
+                      <p className="font-bold text-slate-800 text-sm md:text-lg tracking-tight mb-0.5 md:mb-1">{address.fullName}</p>
+                      <p className="text-xs md:text-sm text-slate-500 font-medium leading-relaxed mb-3 md:mb-6">
                         {address.city}, {address.state} {address.pinCode}
                       </p>
                       
-                      <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-200/60">
-                         <div className="flex items-center gap-2 text-slate-500">
-                           <Smartphone className="w-4 h-4" />
-                           <span className="text-xs font-bold">{address.phoneNumber}</span>
+                      <div className="mt-auto flex items-center justify-between pt-3 md:pt-4 border-t border-slate-200/60">
+                         <div className="flex items-center gap-1.5 md:gap-2 text-slate-500">
+                           <Smartphone className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                           <span className="text-[10px] md:text-xs font-bold">{address.phoneNumber}</span>
                          </div>
                          {selectedAddressId === address.id && (
                            <div className="w-6 h-6 bg-brand-500 rounded-full flex items-center justify-center shadow-sm">
@@ -189,17 +189,17 @@ export function CheckoutPageContent() {
           )}
         </section>
 
-        <section className="glass rounded-[2rem] shadow-sm p-6 md:p-10 transition-all hover:shadow-md animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-          <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-200/50 text-slate-800">
-            <div className="flex items-center gap-3">
+        <section className="glass rounded-3xl md:rounded-[2rem] shadow-sm p-4 md:p-8 transition-all hover:shadow-md animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+          <div className="flex items-center justify-between mb-4 md:mb-8 pb-3 md:pb-4 border-b border-slate-200/50 text-slate-800">
+            <div className="flex items-center gap-2 md:gap-3">
               <div className="p-2 bg-slate-100 text-slate-600 rounded-xl">
-                <ShoppingBag className="w-5 h-5" />
+                <ShoppingBag className="w-4 h-4 md:w-5 md:h-5" />
               </div>
-              <h2 className="text-2xl font-bold text-slate-800 tracking-tight">
+              <h2 className="text-xl md:text-2xl font-bold text-slate-800 tracking-tight">
                 Order Review
               </h2>
             </div>
-            <span className="text-sm font-semibold bg-slate-100 text-slate-600 px-3 py-1 rounded-full">{cartItems.length} {cartItems.length === 1 ? 'Item' : 'Items'}</span>
+            <span className="text-xs md:text-sm font-semibold bg-slate-100 text-slate-600 px-3 py-1 rounded-full">{cartItems.length} {cartItems.length === 1 ? 'Item' : 'Items'}</span>
           </div>
           <div className="flex flex-col gap-2">
             {cartItems.map((item) => (

@@ -2,6 +2,7 @@ export interface CartItem {
   product_id: number;
   product_name: string;
   product_price: number;
+  original_price?: number;
   quantity: number;
   image: string;
 }
@@ -13,10 +14,12 @@ export interface CartPayload {
 }
 
 export interface ShippingAddress {
+  id?: string;
   fullName: string;
   email: string;
   phoneNumber: string;
   pinCode: string;
   city: string;
   state: string;
+  addressType?: "Home" | "Work" | "Other";
 }

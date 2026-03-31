@@ -1,12 +1,13 @@
 "use client";
 
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Sparkles, ArrowRight, Package, Truck, Clock } from "lucide-react";
 import Link from "next/link";
 import { useCheckoutStore } from "@/store/useCheckoutStore";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { SuccessSkeleton } from "./Skeleton";
+import { cn } from "@/lib/utils";
 
 export function SuccessPageContent() {
   const router = useRouter();
@@ -21,87 +22,101 @@ export function SuccessPageContent() {
 
   if (!hasHydrated || !lastOrder) {
     return (
-      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="flex items-center justify-center py-24 px-4">
         <SuccessSkeleton />
       </div>
     );
   }
 
   return (
-    <div className="flex items-center justify-center py-8 md:py-16 px-4 sm:px-6 lg:px-8 min-h-[70vh]">
-      <div className="max-w-2xl w-full glass p-8 md:p-12 rounded-[2.5rem] shadow-sm border border-slate-200/50 animate-fade-in-up relative overflow-hidden">
+    <div className="flex items-center justify-center py-12 md:py-24 px-4 sm:px-6 lg:px-8 min-h-[80vh]">
+      <div className="max-w-3xl w-full flex flex-col gap-6 md:gap-8 animate-fade-in">
         
-        {/* Decorative Background Elements */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-200/20 rounded-full blur-3xl -mx-10 -mt-10 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-200/20 rounded-full blur-3xl -mx-10 -mb-10 pointer-events-none" />
-
-        <div className="text-center space-y-4 md:space-y-6 relative z-10">
-          <div className="flex justify-center">
-            <div className="relative">
-              <div className="absolute inset-0 bg-brand-400 rounded-full blur-xl opacity-30 animate-pulse-slow" />
-              <div className="rounded-full bg-gradient-to-tr from-brand-100 to-white shadow-sm p-4 relative border border-brand-200/50">
-                <CheckCircle className="w-12 h-12 md:w-16 md:h-16 text-brand-600 animate-in zoom-in duration-500 delay-100" />
-              </div>
-            </div>
-          </div>
-          <div>
-            <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tighter mb-2 md:mb-3">Order Successful!</h1>
-            <p className="text-slate-500 font-semibold text-sm md:text-lg max-w-sm mx-auto">
-              Thank you, <span className="text-slate-800">{lastOrder.shippingAddress.fullName}</span>. Your eco-friendly products are being processed.
-            </p>
-          </div>
-        </div>
-
-        <div className="border-t border-slate-200/50 mt-8 md:mt-10 pt-8 md:pt-10 relative z-10">
-          <h2 className="text-lg md:text-xl font-bold tracking-tight text-slate-800 mb-4 md:mb-6 flex items-center gap-2">
-            <span className="w-1 md:w-1.5 h-5 md:h-6 bg-brand-500 rounded-full inline-block"></span>
-            Order Overview
-          </h2>
-          <div className="space-y-3 md:space-y-4">
-            {lastOrder.cartItems.map((item) => (
-              <div key={item.product_id} className="flex items-center gap-3 md:gap-5 py-3 md:py-4 border-b border-slate-100 last:border-0 hover:bg-white/40 transition-colors p-2 -mx-2 rounded-xl cursor-default">
-                <div className="relative w-12 h-12 md:w-16 md:h-16 bg-slate-100 rounded-xl overflow-hidden shrink-0 shadow-sm border border-slate-200/30">
-                  <Image src={item.image} alt={item.product_name} fill className="object-cover hover:scale-105 transition-transform duration-500" />
+        {/* Celebration Header */}
+        <div className="bento-card overflow-visible relative group">
+           <div className="absolute inset-0 bg-brand-500/5 blur-3xl rounded-full opacity-50 group-hover:opacity-100 transition-opacity duration-1000" />
+           
+           <div className="p-8 md:p-16 flex flex-col items-center text-center relative z-10">
+              <div className="relative mb-6 md:mb-10">
+                <div className="w-20 h-20 md:w-24 md:h-24 bg-slate-900 rounded-3xl md:rounded-[2.5rem] flex items-center justify-center shadow-2xl shadow-slate-200 rotate-6 group-hover:rotate-0 transition-transform duration-700">
+                  <CheckCircle className="w-10 h-10 md:w-12 md:h-12 text-brand-400" />
                 </div>
-                <div className="flex-1 text-slate-800">
-                  <p className="font-bold tracking-tight text-sm md:text-base text-slate-900 line-clamp-1">{item.product_name}</p>
-                  <p className="text-[10px] md:text-xs font-semibold text-slate-500 tracking-wide mt-0.5 md:mt-1 uppercase">Qty: {item.quantity}</p>
-                </div>
-                <div className="font-black text-slate-900 text-base md:text-lg">
-                  ₹{item.product_price * item.quantity}
+                <div className="absolute -top-3 -right-3 w-10 h-10 md:w-12 md:h-12 bg-white rounded-2xl flex items-center justify-center shadow-xl border border-slate-100 animate-bounce">
+                   <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-brand-500" />
                 </div>
               </div>
-            ))}
-          </div>
+
+              <h1 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4 tracking-tight">Order placed successfully</h1>
+              <p className="text-slate-500 font-medium max-w-sm mx-auto text-sm md:text-base leading-relaxed">
+                Thank you, <span className="text-slate-900 underline decoration-brand-500 decoration-2 underline-offset-4">{lastOrder.shippingAddress.fullName}</span>. Your sustainable journey has begun.
+              </p>
+           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-slate-100 to-slate-50/50 p-5 md:p-8 rounded-2xl md:rounded-3xl flex flex-col md:flex-row justify-between gap-6 md:gap-8 border border-slate-200/50 mt-6 md:mt-8 relative z-10 shadow-sm">
-          <div className="flex-1">
-            <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2 flex items-center gap-1.5">
-              Shipping To
-            </p>
-            <p className="font-bold text-slate-900 text-base md:text-lg mb-1">{lastOrder.shippingAddress.fullName}</p>
-            <p className="text-xs md:text-sm text-slate-500 font-medium leading-relaxed">
-                {lastOrder.shippingAddress.city}, {lastOrder.shippingAddress.state} {lastOrder.shippingAddress.pinCode}
-            </p>
-          </div>
-          <div className="md:text-right border-t md:border-t-0 md:border-l border-slate-200/60 pt-5 md:pt-0 md:pl-8 flex flex-col justify-center">
-            <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2">
-              {lastOrder.paymentMethod === 'cod' ? 'Amount to be Paid' : 'Amount Paid'}
-            </p>
-            <p className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-emerald-500 tracking-tighter">₹{lastOrder.grandTotal}</p>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+           <div className="md:col-span-2 bento-card p-6 md:p-8">
+              <div className="flex items-center gap-3 mb-6 md:mb-8">
+                 <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center">
+                    <Package className="w-4 h-4 text-slate-600" />
+                 </div>
+                 <h2 className="text-lg font-bold text-slate-900 tracking-tight">Order contents</h2>
+              </div>
+
+              <div className="space-y-4 md:space-y-6">
+                {lastOrder.cartItems.map((item) => (
+                  <div key={item.product_id} className="flex items-center gap-4 md:gap-5 group/item">
+                    <div className="relative w-14 h-14 md:w-16 md:h-16 bg-slate-50 rounded-xl md:rounded-2xl overflow-hidden border border-slate-100 group-hover/item:scale-105 transition-transform">
+                      <Image src={item.image} alt={item.product_name} fill className="object-cover" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-bold text-slate-800 text-sm tracking-tight leading-none mb-1.5">{item.product_name}</p>
+                      <p className="text-[10px] md:text-xs font-semibold text-slate-400">Qty: {item.quantity}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-slate-900">₹{item.product_price * item.quantity}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+           </div>
+
+           {/* Quick Stats */}
+           <div className="flex flex-col gap-6">
+              <div className="bento-card p-6 bg-brand-50 border-brand-100 flex flex-col justify-center items-center text-center">
+                 <Clock className="w-6 h-6 text-brand-600 mb-2" />
+                 <p className="text-[10px] md:text-xs font-semibold text-brand-700 mb-1">Estimated delivery</p>
+                 <p className="text-base md:text-lg font-bold text-brand-900 tracking-tight">3-5 business days</p>
+              </div>
+
+              <div className="bento-card p-6 flex flex-col justify-center items-center text-center">
+                 <Truck className="w-6 h-6 text-slate-400 mb-2" />
+                 <p className="text-[10px] md:text-xs font-semibold text-slate-400 mb-1">Shipping status</p>
+                 <p className="text-base md:text-lg font-bold text-slate-900 tracking-tight">Processing</p>
+              </div>
+           </div>
         </div>
 
-        <div className="pt-8 md:pt-10 text-center relative z-10">
-          <Link
-            href="/"
-            className="inline-flex justify-center items-center px-8 md:px-12 py-4 md:py-5 border border-transparent font-bold rounded-xl md:rounded-2xl text-white bg-slate-900 hover:bg-black transition-all shadow-xl shadow-slate-200 uppercase tracking-[0.2em] text-[10px] md:text-xs active:scale-95 group overflow-hidden relative"
-          >
-            <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-brand-600 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <span className="relative">Continue Shopping</span>
-          </Link>
+        <div className="bento-card bg-slate-900 p-6 md:p-10 text-white flex flex-col md:flex-row items-center justify-between gap-8 md:gap-10 overflow-hidden relative">
+           <div className="absolute top-0 left-0 w-64 h-64 bg-brand-500/10 rounded-full blur-[100px] -ml-32 -mt-32" />
+           
+           <div className="relative z-10 text-center md:text-left">
+              <p className="text-[10px] md:text-[16px] font-semibold text-brand-400 mb-2">Total amount paid</p>
+              <h2 className="text-4xl md:text-5xl text-black tracking-tighter">₹{lastOrder.grandTotal}</h2>
+           </div>
+
+           <Link
+             href="/"
+             className="group relative h-14 md:h-16 px-10 md:px-12 bg-white border border-brand-400 text-black rounded-2xl flex items-center justify-center font-bold text-xs md:text-sm tracking-wide transition-all active:scale-95 overflow-hidden w-full md:w-auto"
+           >
+              <div className="absolute inset-0 bg-brand-500 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
+              <span className="relative z-10 flex items-center gap-3 group-hover:text-white transition-colors duration-500">
+                 Continue shopping
+                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </span>
+           </Link>
         </div>
+
       </div>
     </div>
   );

@@ -8,15 +8,20 @@ export function Skeleton({ className }: { className?: string }) {
 
 export function CartItemSkeleton() {
   return (
-    <div className="flex items-center gap-4 py-4 border-b border-slate-100 last:border-0 rounded-2xl">
-      <Skeleton className="w-20 h-20 rounded-xl" />
-      <div className="flex-1 space-y-3">
-        <Skeleton className="h-5 w-3/4 rounded-md" />
-        <Skeleton className="h-4 w-1/4 rounded-md" />
-      </div>
-      <div className="flex flex-col items-end gap-3">
-        <Skeleton className="h-10 w-24 rounded-lg" />
-        <Skeleton className="h-4 w-16" />
+    <div className="flex flex-row items-center gap-3 p-3 md:p-5 border border-slate-100 rounded-3xl md:rounded-[2rem]">
+      <Skeleton className="w-20 h-20 md:w-36 md:h-36 rounded-xl md:rounded-2xl shrink-0" />
+      <div className="flex-1 space-y-2 md:space-y-4 min-w-0">
+        <div className="flex justify-between items-start gap-2">
+          <div className="space-y-2 flex-1">
+            <Skeleton className="h-4 md:h-6 w-3/4 rounded-md" />
+            <Skeleton className="h-3 md:h-4 w-1/2 rounded-md" />
+          </div>
+          <Skeleton className="h-5 md:h-7 w-16 rounded-md shrink-0" />
+        </div>
+        <div className="pt-2 md:pt-4 border-t border-slate-50 flex justify-between items-center">
+          <Skeleton className="h-8 md:h-10 w-24 rounded-xl" />
+          <Skeleton className="h-8 w-8 rounded-xl" />
+        </div>
       </div>
     </div>
   );

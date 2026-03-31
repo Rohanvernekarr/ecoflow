@@ -1,8 +1,11 @@
+"use client";
+
 import { useCheckoutStore } from "@/store/useCheckoutStore";
-import { Ticket, X, ShieldCheck } from "lucide-react";
+import { Ticket, X, ShieldCheck, Plus, ShoppingCart, Sparkles, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { CouponModal } from "./CouponModal";
 import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 interface OrderSummaryProps {
   buttonLabel?: string;
@@ -17,7 +20,7 @@ export function OrderSummary({
 }: OrderSummaryProps) {
   const [showCouponModal, setShowCouponModal] = useState(false);
   const pathname = usePathname();
-  const isCheckoutPage = pathname === "/checkout";
+  const isCheckoutPage = pathname === "/checkout" || pathname === "/payment";
   
   const getSubtotal = useCheckoutStore((state) => state.getSubtotal);
   const getGrandTotal = useCheckoutStore((state) => state.getGrandTotal);
@@ -33,114 +36,134 @@ export function OrderSummary({
 
   return (
     <>
-      <div className=" shadow-sm rounded-3xl md:rounded-[2rem] p-5 md:p-6 lg:p-8 sticky top-24 z-100 text-slate-800 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-        <h2 className="text-lg md:text-xl font-bold text-slate-900 mb-4 md:mb-6 flex items-center gap-2">
-          Order Summary
-        </h2>
-        
-        <div className="mb-4 md:mb-6 space-y-2 md:space-y-3">
-          {cartItems.map((item) => (
-            <div key={item.product_id} className="flex justify-between text-xs md:text-sm text-slate-500 font-medium">
-              <span className="truncate pr-4 text-slate-600">{item.product_name}</span>
-              <span className="shrink-0 font-bold text-slate-700">× {item.quantity}</span>
+      <div className="bento-card group/summary md:sticky md:top-28 overflow-visible">
+        <div className="p-4 md:p-8">
+          <div className="flex items-center justify-between mb-4 md:mb-6">
+            <div className="flex items-center gap-2 md:gap-3">
+               <div className="w-8 h-8 md:w-10 md:h-10 bg-slate-900 text-white rounded-lg md:rounded-xl flex items-center justify-center shadow-lg group-hover/summary:scale-110 transition-transform duration-500">
+                  <ShoppingCart className="w-4 h-4 md:w-5 md:h-5" />
+               </div>
+               <h2 className="text-[26px] md:text-xl font-bold text-slate-900 tracking-tight">Order summary</h2>
             </div>
-          ))}
-        </div>
-
-        {isCheckoutPage && (
-          <div className="mb-8 p-1 relative group">
-            <div className="absolute inset-0 bg-gradient-to-r from-brand-200 to-brand-100 rounded-2xl opacity-50 group-hover:opacity-100 transition-opacity blur-sm" />
-            <div className="relative p-4 bg-white/80 backdrop-blur-md rounded-xl border border-white">
-              {appliedCoupon ? (
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="bg-brand-100 p-1.5 rounded-md">
-                      <Ticket className="w-4 h-4 text-brand-600" />
-                    </div>
-                    <div>
-                      <span className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Applied Coupon</span>
-                      <span className="font-bold text-brand-600 uppercase">{appliedCoupon}</span>
-                    </div>
-                  </div>
-                  <button 
-                    onClick={removeCoupon}
-                    className="p-1.5 hover:bg-red-50 hover:text-red-500 rounded-full transition-colors flex items-center justify-center"
-                    aria-label="Remove coupon"
-                  >
-                    <X className="w-4 h-4 text-slate-400" />
-                  </button>
-                </div>
-              ) : (
-                <button 
-                  onClick={() => setShowCouponModal(true)}
-                  className="w-full flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="bg-slate-100 p-1.5 rounded-md group-hover:bg-brand-50 transition-colors">
-                      <Ticket className="w-4 h-4 text-slate-500 group-hover:text-brand-500 transition-colors" />
-                    </div>
-                    <span className="text-sm font-bold text-slate-600 group-hover:text-brand-600 transition-colors">Apply Promo Code</span>
-                  </div>
-                  <span className="text-xs font-bold text-brand-600 py-1 px-3 rounded-full bg-brand-50 group-hover:bg-brand-100 transition-colors">Add</span>
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-
-        <div className="space-y-3 md:space-y-4 text-slate-600 mb-6 md:mb-8 text-sm md:text-base">
-          <div className="flex justify-between">
-            <span>Subtotal</span>
-            <span className="font-semibold text-slate-800">₹{subtotal}</span>
           </div>
           
-          <div className="flex justify-between">
-            <span>Shipping</span>
-            <span className="font-semibold text-slate-800">{shippingFee === 0 ? <span className="text-brand-600 uppercase text-[10px] md:text-xs tracking-wider">Free</span> : `₹${shippingFee}`}</span>
+          <div className="mb-4 md:mb-6 space-y-3 md:space-y-4 max-h-[180px] md:max-h-[240px] overflow-y-auto pr-2 hide-scrollbar">
+            {cartItems.map((item) => (
+              <div key={item.product_id} className="flex justify-between items-start gap-4">
+                <div className="flex-1 min-w-0">
+                  <p className="text-[14px] md:text-[14px] font-bold text-slate-900 truncate tracking-tight">{item.product_name}</p>
+                  <p className="text-[12px] md:text-[13px] font-semibold text-slate-500 mt-0.5 md:mt-1">Qty: {item.quantity}</p>
+                </div>
+                <span className="shrink-0 font-bold text-slate-900 text-[18px] md:text-sm tracking-tighter">
+                  ₹{(item.product_price * item.quantity).toLocaleString("en-IN")}
+                </span>
+              </div>
+            ))}
           </div>
 
-          {discountApplied > 0 && (
-            <div className="flex justify-between text-sm text-brand-600 bg-brand-50/50 p-2 -mx-2 rounded-lg">
-              <span>Savings</span>
-              <span className="font-semibold">-₹{discountApplied}</span>
-            </div>
-          )}
+          <div className="space-y-3 md:space-y-4 border-t border-slate-100 pt-4 md:pt-6 mb-4 md:mb-6">
+            {/* Promo Section */}
+            {isCheckoutPage && (
+              <div className="mb-4">
+                {appliedCoupon ? (
+                  <div className="flex items-center justify-between p-2 md:p-3 bg-brand-50 border border-brand-100 rounded-xl md:rounded-2xl animate-scale-in">
+                    <div className="flex items-center gap-2 md:gap-3">
+                      <div className="w-7 h-7 md:w-8 md:h-8 bg-brand-600 rounded-lg md:rounded-xl flex items-center justify-center shadow-md">
+                        <Ticket className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" />
+                      </div>
+                      <div>
+                        <span className="block text-[8px] md:text-[9px] text-brand-700/60 font-bold">Applied</span>
+                        <span className="font-bold text-brand-700 text-[10px] md:text-xs">{appliedCoupon}</span>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={removeCoupon}
+                      className="w-6 h-6 md:w-7 md:h-7 flex items-center justify-center hover:bg-red-50 text-slate-400 hover:text-red-500 rounded-full transition-all active:scale-90"
+                    >
+                      <X className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <button 
+                    onClick={() => setShowCouponModal(true)}
+                    className="w-full group/promo flex items-center justify-between p-2 md:p-3 bg-slate-50 border border-slate-100 rounded-xl md:rounded-2xl hover:bg-white hover:border-brand-200 hover:shadow-lg transition-all duration-300"
+                  >
+                    <div className="flex items-center gap-2 md:gap-3">
+                      <div className="w-7 h-7 md:w-8 md:h-8 bg-white border border-slate-200 rounded-lg md:rounded-xl flex items-center justify-center group-hover/promo:bg-brand-50 group-hover/promo:border-brand-100 transition-colors">
+                        <Ticket className="w-3.5 h-3.5 md:w-4 md:h-4 text-slate-400 group-hover/promo:text-brand-600" />
+                      </div>
+                      <span className="text-[9px] md:text-[10px] font-bold text-slate-500 group-hover/promo:text-brand-600 transition-colors">Apply promo</span>
+                    </div>
+                    <div className="w-5 h-5 md:w-6 md:h-6 bg-white rounded-full flex items-center justify-center shadow-sm group-hover/promo:bg-brand-500 transition-colors">
+                        <Plus className="w-2.5 h-2.5 md:w-3 md:h-3 text-slate-400 group-hover/promo:text-white" />
+                    </div>
+                  </button>
+                )}
+              </div>
+            )}
 
-          {couponDiscount > 0 && (
-            <div className="flex justify-between text-sm text-emerald-600 bg-emerald-50/50 p-2 -mx-2 rounded-lg">
-              <span className="font-bold flex items-center gap-1.5"><Ticket className="w-3.5 h-3.5" /> Coupon Discount</span>
-              <span className="font-bold">-₹{couponDiscount}</span>
+            <div className="flex justify-between items-center text-[15px] md:text-[14px] font-semibold text-slate-400">
+              <span>Subtotal</span>
+              <span className="text-slate-900">₹{subtotal.toLocaleString("en-IN")}</span>
             </div>
-          )}
-
-          <div className="border-t border-slate-200/60 pt-4 md:pt-6 mt-4 md:mt-6 flex justify-between items-end">
-            <div>
-              <span className="block text-xs md:text-sm font-medium text-slate-500 mb-0.5 md:mb-1">Total Amount</span>
-              <p className="text-[9px] md:text-[10px] text-slate-400 uppercase tracking-widest font-bold">Incl. of all taxes</p>
-            </div>
-            <span className="font-black text-2xl md:text-3xl text-slate-900 tracking-tight">₹{grandTotal}</span>
-          </div>
-        </div>
-
-        {buttonLabel && onAction && (
-          <div className="space-y-3 md:space-y-4">
-            <button
-              onClick={onAction}
-              disabled={isActionDisabled || subtotal === 0}
-              className="w-full relative group overflow-hidden bg-slate-900 hover:bg-black disabled:bg-slate-300 text-white font-bold py-3 md:py-4 rounded-xl shadow-lg transition-all active:scale-[0.98] focus:ring-4 focus:ring-slate-900/20"
-            >
-              <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-brand-600 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="absolute inset-0 w-full h-full from-white/20 to-transparent bg-gradient-to-b opacity-0 group-hover:opacity-100" />
-              <span className="relative flex items-center justify-center gap-2 uppercase tracking-widest text-xs md:text-sm">
-                {buttonLabel}
+            
+            <div className="flex justify-between items-center text-[15px] md:text-[14px] font-semibold text-slate-400">
+              <span>Delivery</span>
+              <span className={cn(shippingFee === 0 ? "text-brand-600" : "text-slate-900")}>
+                {shippingFee === 0 ? "Complimentary" : `₹${shippingFee}`}
               </span>
-            </button>
-            <div className="flex items-center justify-center gap-1.5 text-[10px] md:text-xs text-slate-500 font-medium">
-              <ShieldCheck className="w-3 h-3 md:w-4 md:h-4 text-brand-500" />
-              Secure encrypted checkout
             </div>
+
+            {discountApplied > 0 && (
+              <div className="flex justify-between items-center text-[9px] md:text-[11px] font-bold text-brand-600 bg-brand-50/50 p-2 md:p-2.5 rounded-lg md:rounded-xl border border-brand-100/30">
+                <span className="flex items-center gap-1.5 md:gap-2">
+                    <Sparkles className="w-2.5 h-2.5 md:w-3 md:h-3" />
+                    Savings
+                </span>
+                <span>-₹{discountApplied.toLocaleString("en-IN")}</span>
+              </div>
+            )}
+
+            {couponDiscount > 0 && (
+              <div className="flex justify-between items-center text-[13px] md:text-[13px] font-bold text-emerald-600 bg-emerald-50/50 p-2 md:p-2.5 rounded-lg md:rounded-xl border border-emerald-100/30">
+                <span className="flex items-center gap-1.5 md:gap-2">
+                  <Ticket className="w-2.5 h-2.5 md:w-3 md:h-3" />
+                  Code applied
+                </span>
+                <span>-₹{couponDiscount.toLocaleString("en-IN")}</span>
+              </div>
+            )}
           </div>
-        )}
+
+          <div className="pt-4 md:pt-6 mt-4 md:mt-6 border-t-2 border-slate-900 flex justify-between items-center">
+            <div className="space-y-0.5 md:space-y-1">
+              <span className="block text-[20px] md:text-[18px] font-bold text-slate-700">Total amount</span>
+              <div className="flex items-center gap-1 px-1.5 py-0.5 bg-slate-100 rounded-md">
+                 <ShieldCheck className="w-2.5 h-2.5 md:w-3 md:h-3 text-slate-500" />
+                 <span className="text-[12px] md:text-[10px] font-bold text-slate-600 whitespace-nowrap">Incl. of all taxes</span>
+              </div>
+            </div>
+            <span className="font-bold text-xl md:text-3xl text-slate-900 tracking-tighter">
+              ₹{grandTotal.toLocaleString("en-IN")}
+            </span>
+          </div>
+
+          {buttonLabel && onAction && (
+            <div className="mt-4 md:mt-6">
+              <button
+                onClick={onAction}
+                disabled={isActionDisabled || subtotal === 0}
+                className="group relative w-full h-10 md:h-14 bg-slate-900 hover:bg-black disabled:bg-slate-100 text-white font-bold rounded-xl md:rounded-2xl transition-all active:scale-[0.98] text-[9px] md:text-xs overflow-hidden"
+              >
+                 <div className="absolute inset-0 bg-brand-500 translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out" />
+                 <span className="relative z-10 flex items-center justify-center gap-2 md:gap-3">
+                   {buttonLabel}
+                   <ArrowRight className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:translate-x-1 transition-transform" />
+                 </span>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {showCouponModal && (

@@ -1,108 +1,104 @@
 "use client";
 
-import { ChevronLeft, ArrowRight, Check } from "lucide-react";
 import { useCheckoutStore } from "@/store/useCheckoutStore";
-import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
+import { ArrowLeft, ArrowRight, ShieldCheck, ShoppingCart, Leaf, Lock } from "lucide-react";
+import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 
 interface StickyFooterProps {
+  nextLabel: string;
+  nextHref?: string;
+  onNext?: () => void;
   backLabel?: string;
   backHref?: string;
-  onBack?: () => void;
-  nextLabel: string;
-  onNext: () => void;
-  isNextDisabled?: boolean;
-  showSummary?: boolean;
+  disabledNext?: boolean;
   isProcessing?: boolean;
 }
 
-export function StickyFooter({
-  backLabel = "Return",
-  backHref,
-  onBack,
-  nextLabel,
+export function StickyFooter({ 
+  nextLabel, 
+  nextHref, 
   onNext,
-  isNextDisabled = false,
-  showSummary = true,
-  isProcessing = false,
+  backLabel = "Cart",
+  backHref = "/",
+  disabledNext = false,
+  isProcessing = false
 }: StickyFooterProps) {
   const router = useRouter();
-  const getGrandTotal = useCheckoutStore((state) => state.getGrandTotal);
   const cartItems = useCheckoutStore((state) => state.cartItems);
-  const hasHydrated = useCheckoutStore((state) => state.hasHydrated);
+  const couponDiscount = useCheckoutStore((state) => state.couponDiscount);
+  const subtotal = cartItems.reduce((acc, item) => acc + item.product_price * item.quantity, 0);
+  const grandTotal = subtotal - couponDiscount;
 
-  if (!hasHydrated) return null;
-
-  const total = getGrandTotal();
-  const itemCount = cartItems.length;
-
-  const handleBack = () => {
-    if (onBack) onBack();
-    else if (backHref) router.push(backHref);
-    else router.back();
+  const handleNext = () => {
+    if (onNext) onNext();
+    else if (nextHref) router.push(nextHref);
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 animate-slide-up px-2 pb-2 md:px-4 md:pb-8 pointer-events-none">
-      <div className="max-w-5xl mx-auto w-full pointer-events-auto">
-        <div className="relative group/footer">
-          <div className="absolute inset-0 bg-brand-500/10 blur-3xl rounded-full opacity-0 group-hover/footer:opacity-100 transition-opacity duration-700" />
+    <div className="fixed bottom-0 left-0 right-0 z-[100] px-3 pb-[calc(16px+env(safe-area-inset-bottom))] pt-3 md:px-8 md:pb-8 md:pt-8 pointer-events-none">
+      <div className="max-w-5xl mx-auto pointer-events-auto">
+        <div className="relative glass rounded-2xl md:rounded-[2.5rem] p-3 md:p-6 shadow-premium border-white/40 border-2 overflow-hidden group">
           
-          <div className="relative bg-slate-900/95 backdrop-blur-2xl border border-white/10 rounded-2xl md:rounded-[2.5rem] p-2 md:p-4 flex flex-row items-center justify-between gap-2 md:gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+          <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-brand-500/10 rounded-full blur-[60px] group-hover:bg-brand-500/20 transition-all duration-700" />
+          
+          <div className="relative flex flex-col md:flex-row items-center justify-between gap-3 md:gap-12">
             
-            {showSummary && (
-              <div className="flex items-center gap-3 md:gap-6 px-2 md:px-4 py-1 md:py-0">
-                <div className="flex flex-col">
-                  <span className="text-[8px] md:text-[10px] font-semibold text-slate-400 mb-0.5 md:mb-1">
-                    Value
-                  </span>
-                  <span className="text-sm md:text-2xl font-bold text-white tracking-tighter tabular-nums">
-                    ₹{total.toLocaleString("en-IN")}
-                  </span>
-                </div>
-                <div className="h-6 md:h-10 w-px bg-white/10" />
-                <div className="hidden sm:flex flex-col">
-                  <span className="text-[10px] font-semibold text-slate-400 mb-1">
-                    Holdings
-                  </span>
-                  <span className="text-xs font-bold text-brand-400">
-                    {itemCount} {itemCount === 1 ? "unit" : "units"}
-                  </span>
+            <div className="flex items-center justify-between md:justify-start gap-4 md:gap-10 w-full md:w-auto">
+              <div className="flex flex-col gap-0.5">
+                <span className="text-[9px] md:text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 leading-none">
+                   <Lock className="w-2.5 h-2.5" />
+                   Secure
+                </span>
+                <div className="flex items-baseline gap-1.5">
+                   <h2 className="text-xl md:text-4xl font-bold text-brand-950 tracking-tighter leading-tight">
+                     ₹{grandTotal.toLocaleString("en-IN")}
+                   </h2>
+                   {couponDiscount > 0 && (
+                      <span className="text-[9px] md:text-xs font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-lg border border-emerald-100 leading-none">
+                         -₹{couponDiscount}
+                      </span>
+                   )}
                 </div>
               </div>
-            )}
 
-            <div className="flex items-center gap-2 md:gap-3 shrink-0">
-              <button
-                onClick={handleBack}
-                className="group/back flex items-center justify-center gap-1.5 px-3 md:px-6 h-10 md:h-14 rounded-xl md:rounded-2xl bg-white/5 hover:bg-white/10 text-white font-bold text-[10px] md:text-xs transition-all active:scale-95 border border-white/5"
-              >
-                <ChevronLeft className="w-3.5 h-3.5 md:w-4 md:h-4 text-slate-400 group-hover/back:-translate-x-1 transition-transform" />
-                <span className="hidden xs:inline">{backLabel}</span>
-              </button>
+              <div className="flex items-center gap-2 px-2.5 py-1.5 bg-brand-50 rounded-xl border border-brand-100/50 shrink-0">
+                 <div className="w-6 h-6 md:w-8 md:h-8 rounded-lg bg-white shadow-sm flex items-center justify-center">
+                    <Leaf className="w-3 h-3 md:w-4 md:h-4 text-emerald-600" />
+                 </div>
+                 <div className="flex flex-col leading-tight">
+                    <span className="text-[9px] font-bold text-brand-900 uppercase tracking-widest">Eco-Saved</span>
+                    <span className="text-[10px] font-bold text-slate-500 hidden xs:block">Sustainable Choice</span>
+                 </div>
+              </div>
+            </div>
 
+            <div className="flex items-center gap-3 w-full md:w-auto">
+              {backHref && (
+                <Link 
+                  href={backHref}
+                  className="flex-1 md:flex-none px-4 py-3 md:py-4 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 font-bold rounded-xl md:rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2 shadow-soft group/back"
+                >
+                  <ArrowLeft className="w-4 h-4 group-hover/back:-translate-x-1 transition-transform" />
+                  <span className="text-sm">{backLabel}</span>
+                </Link>
+              )}
+              
               <button
-                onClick={onNext}
-                disabled={isNextDisabled || isProcessing}
-                className="group/next relative h-10 md:h-14 px-4 md:px-12 rounded-xl md:rounded-2xl bg-white text-black font-bold text-[16px] md:text-[18px] shadow-xl transition-all active:scale-[0.98] disabled:bg-slate-800 disabled:text-slate-500 overflow-hidden"
+                onClick={handleNext}
+                disabled={disabledNext || isProcessing}
+                className="flex-[2] md:flex-none relative px-6 md:px-12 py-3 md:py-5 bg-brand-900 hover:bg-black text-white font-bold rounded-xl md:rounded-[1.5rem] transition-all active:scale-95 shadow-xl shadow-brand-100/40 disabled:shadow-none overflow-hidden group/next"
               >
-                <div className="absolute inset-0 bg-brand-500 translate-y-full group-hover/next:translate-y-0 transition-transform duration-500 ease-out" />
-                
-                <span className="relative z-10 flex items-center justify-center gap-2 md:gap-3 group-hover:text-white transition-colors duration-500">
-                  {isProcessing ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 md:w-4 md:h-4 border-2 border-black/10 border-t-black group-hover:border-white/30 group-hover:border-t-white rounded-full animate-spin" />
-                      <span className="hidden xs:inline">Syncing...</span>
-                    </div>
-                  ) : (
-                    <>
-                      <span>{nextLabel}</span>
-                      <ArrowRight className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover/next:translate-x-1 transition-transform" />
-                    </>
-                  )}
-                </span>
+                 <div className="absolute inset-0 bg-brand-700 translate-y-full group-hover/next:translate-y-0 transition-transform duration-500 ease-out" />
+                 <span className="relative z-10 flex items-center justify-center gap-2 md:gap-3">
+                    <span className="text-[13px] md:text-base tracking-wide">
+                       {isProcessing ? "Security..." : nextLabel}
+                    </span>
+                    {!isProcessing && <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover/next:translate-x-1.5 transition-transform" />}
+                 </span>
               </button>
             </div>
+
           </div>
         </div>
       </div>

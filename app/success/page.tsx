@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function Success() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="animate-fade-in">
       <SuccessPageContent />
     </div>
   );

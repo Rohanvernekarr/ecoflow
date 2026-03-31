@@ -140,7 +140,7 @@ export function CartPageContent() {
 
       {cartItems.length > 0 && (
         <StickyFooter 
-          backLabel="Continue Shopping"
+          backLabel="Back"
           backHref="/"
           nextLabel="Checkout Now"
           onNext={() => router.push("/checkout")}

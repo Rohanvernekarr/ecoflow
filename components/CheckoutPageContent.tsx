@@ -1,242 +1,258 @@
 "use client";
 
-import { AddressForm } from "@/components/AddressForm";
-import { OrderSummary } from "@/components/OrderSummary";
-import { CartItem } from "@/components/CartItem";
-import { StickyFooter } from "@/components/StickyFooter";
 import { useCheckoutStore } from "@/store/useCheckoutStore";
+import { CartItem } from "@/components/CartItem";
+import { OrderSummary } from "@/components/OrderSummary";
+import { StickyFooter } from "@/components/StickyFooter";
+import { AddressForm } from "@/components/AddressForm";
 import { useRouter } from "next/navigation";
-import { ShoppingBag, MapPin, Plus, Smartphone, Check, X, Edit, ArrowRight } from "lucide-react";
-import { useEffect, useState } from "react";
-import { ShippingAddress } from "@/types";
-import { AddressSkeleton, CartItemSkeleton, OrderSummarySkeleton } from "./Skeleton";
+import { MapPin, Plus, Check, ShoppingBag, Truck, ShieldCheck, Smartphone, Trash2, AlertCircle } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 export function CheckoutPageContent() {
   const router = useRouter();
+  const addressSectionRef = useRef<HTMLDivElement>(null);
+  const [addressError, setAddressError] = useState(false);
+  
   const cartItems = useCheckoutStore((state) => state.cartItems);
   const savedAddresses = useCheckoutStore((state) => state.savedAddresses);
-  const selectedAddressId = useCheckoutStore((state) => state.selectedAddressId);
-  const setSelectedAddressId = useCheckoutStore((state) => state.setSelectedAddressId);
+  const shippingAddress = useCheckoutStore((state) => state.shippingAddress);
   const setShippingAddress = useCheckoutStore((state) => state.setShippingAddress);
-  const hasHydrated = useCheckoutStore((state) => state.hasHydrated);
   const removeSavedAddress = useCheckoutStore((state) => state.removeSavedAddress);
-  
-  const [showNewForm, setShowNewForm] = useState(false);
-  const [editingAddress, setEditingAddress] = useState<ShippingAddress | null>(null);
+  const [showAddressForm, setShowAddressForm] = useState(false);
+  const [editingAddress, setEditingAddress] = useState<any>(null);
+  const hasHydrated = useCheckoutStore((state) => state.hasHydrated);
 
   useEffect(() => {
-    if (!hasHydrated) return;
-
-    if (cartItems.length === 0) {
+    if (hasHydrated && cartItems.length === 0) {
       router.push("/");
     }
-    
-    if (savedAddresses.length === 0) {
-      setShowNewForm(true);
-    } else {
-      if (!selectedAddressId) {
-        setSelectedAddressId(savedAddresses[0].id || "");
-      }
-    }
-  }, [hasHydrated, cartItems.length, savedAddresses.length, router, selectedAddressId, setSelectedAddressId]);
+  }, [hasHydrated, cartItems.length, router]);
 
-  if (!hasHydrated) {
-    return (
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:px-4 animate-fade-in">
-        <div className="lg:col-span-8 space-y-8">
-          <div className="bento-card p-8">
-            <div className="h-8 w-40 bg-slate-100 rounded-xl mb-10 animate-pulse" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <AddressSkeleton />
-              <AddressSkeleton />
-            </div>
-          </div>
-        </div>
-        <div className="lg:col-span-4">
-          <OrderSummarySkeleton />
-        </div>
-      </div>
-    );
-  }
-
-  const handleProceedToPayment = () => {
-    const address = savedAddresses.find((a) => a.id === selectedAddressId);
-    if (address) {
-      setShippingAddress(address);
-      router.push("/payment");
-    }
-  };
-
-  const handleDeleteAddress = (e: React.MouseEvent, id: string) => {
+  const handleRemoveAddress = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    if (window.confirm("Are you sure you want to delete this address?")) {
-      removeSavedAddress(id);
-      if (selectedAddressId === id) {
-        setSelectedAddressId(savedAddresses.find(a => a.id !== id)?.id || "");
-      }
+    removeSavedAddress(id);
+    if (shippingAddress?.id === id) {
+      // @ts-ignore
+      setShippingAddress(null);
     }
   };
 
-  const handleEditAddress = (e: React.MouseEvent, address: ShippingAddress) => {
-    e.stopPropagation();
-    setEditingAddress(address);
-    setShowNewForm(true);
+  const handleContinue = () => {
+    if (!shippingAddress) {
+      setAddressError(true);
+      addressSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    router.push("/payment");
   };
+
+  if (!hasHydrated || cartItems.length === 0) return null;
 
   return (
     <div className="relative">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 md:px-4 pb-44 animate-fade-in">
-        <div className="lg:col-span-8 flex flex-col gap-6 md:gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:px-4 pb-44 animate-fade-in">
+        
+        <div className="lg:col-span-8 flex flex-col gap-8 md:gap-12">
           
-          <section className="animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-            <div className="flex items-center justify-between mb-4 md:mb-6 px-4 sm:px-0">
-              <div className="flex items-center gap-2 md:gap-3">
-                <div className="w-8 h-8 md:w-10 md:h-10 bg-brand-50 text-brand-600 rounded-lg md:rounded-xl flex items-center justify-center">
-                  <MapPin className="w-4 h-4 md:w-5 md:h-5" />
+          {/* Header Section */}
+          <section className="px-4 sm:px-0">
+             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-brand-100 pb-8">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-brand-600 font-bold text-[10px] md:text-xs uppercase tracking-[0.2em] animate-fade-in">
+                     Step 01 of 02
+                  </div>
+                  <h1 className="text-3xl md:text-5xl font-bold text-brand-950 tracking-tight flex items-center gap-4">
+                    Delivery Details
+                  </h1>
                 </div>
-                <h2 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">Delivery</h2>
+                <div className="flex items-center gap-6">
+                   <div className="flex flex-col items-end">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Shipping to</span>
+                      <span className="text-sm font-bold text-brand-700">INDIA (Premium)</span>
+                   </div>
+                   <div className="w-10 h-10 rounded-full border-2 border-brand-100 flex items-center justify-center">
+                      <Truck className="w-5 h-5 text-brand-600" />
+                   </div>
+                </div>
+             </div>
+          </section>
+
+          {/* Delivery Section */}
+          <section 
+            ref={addressSectionRef}
+            className={cn(
+              "animate-fade-in-up transition-all duration-500 rounded-3xl",
+              addressError && !shippingAddress ? "ring-2 ring-red-500 ring-offset-8 bg-red-50/20" : ""
+            )} 
+            style={{ animationDelay: '0.1s' }}
+          >
+            <div className="flex items-center justify-between mb-6 md:mb-8 px-4 sm:px-0">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-3">
+                  <div className={cn(
+                    "w-10 h-10 rounded-xl flex items-center justify-center shadow-sm transition-colors",
+                    addressError && !shippingAddress ? "bg-red-500 text-white" : "bg-brand-50 text-brand-600"
+                  )}>
+                    <MapPin className="w-5 h-5" />
+                  </div>
+                  <h2 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">Saved Addresses</h2>
+                </div>
+                {addressError && !shippingAddress && (
+                  <div className="flex items-center gap-2 text-red-500 font-bold text-xs mt-2 animate-pulse">
+                     <AlertCircle className="w-3.5 h-3.5" />
+                     Please select or add a delivery address to continue
+                  </div>
+                )}
               </div>
-              
-              {!showNewForm && (
-                <button
-                  onClick={() => {
-                    setEditingAddress(null);
-                    setShowNewForm(true);
-                  }}
-                  className="flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-xs md:text-sm rounded-xl transition-all active:scale-95 group"
-                >
-                  <Plus className="w-3.5 h-3.5 md:w-4 md:h-4 transition-transform group-hover:rotate-90" />
-                  <span>Add address</span>
-                </button>
-              )}
+              <button 
+                onClick={() => { setEditingAddress(null); setShowAddressForm(true); }}
+                className="flex items-center gap-2 px-4 py-2 bg-brand-900 hover:bg-black text-white rounded-full text-xs md:text-sm font-bold transition-all shadow-lg active:scale-95 group"
+              >
+                <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform" />
+                <span>Add new</span>
+              </button>
             </div>
 
-            {showNewForm ? (
-              <AddressForm 
-                initialData={editingAddress || undefined}
-                onSuccess={(newAddress) => {
-                  if (newAddress.id) setSelectedAddressId(newAddress.id);
-                  setShowNewForm(false);
-                  setEditingAddress(null);
-                }}
-                onCancel={() => {
-                  if (savedAddresses.length > 0) {
-                    setShowNewForm(false);
-                    setEditingAddress(null);
-                  }
-                }} 
-              />
+            {showAddressForm ? (
+               <AddressForm 
+                 onCancel={() => setShowAddressForm(false)} 
+                 onSuccess={() => { setShowAddressForm(false); setEditingAddress(null); setAddressError(false); }} 
+                 initialData={editingAddress}
+               />
             ) : (
-              <div className="flex flex-col gap-4 px-4 sm:px-0">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-                  {savedAddresses.map((address) => (
-                    <div
-                      key={address.id}
-                      onClick={() => setSelectedAddressId(address.id!)}
-                      className={cn(
-                        "group relative p-3 md:p-4 bg-white border rounded-2xl md:rounded-3xl cursor-pointer transition-all duration-500 overflow-hidden",
-                        selectedAddressId === address.id
-                          ? "border-brand-500 ring-4 ring-brand-500/5 shadow-xl shadow-brand-500/10"
-                          : "border-slate-100 hover:border-brand-200 hover:shadow-lg"
-                      )}
-                    >
-                      {selectedAddressId === address.id && (
-                        <div className="absolute top-0 right-0 w-16 h-16 bg-brand-500/5 rounded-full -mr-8 -mt-8 animate-pulse" />
-                      )}
-
-                      <div className="flex items-center justify-between mb-3 md:mb-4 relative z-10">
-                        <div className={cn(
-                          "px-2 py-0.5 md:px-3 md:py-1 rounded-lg text-[8px] md:text-xs font-bold transition-colors shadow-sm",
-                           selectedAddressId === address.id ? "bg-brand-600 text-white" : "bg-slate-50 text-slate-400 border border-slate-100"
-                        )}>
-                          {address.addressType || "Home"}
-                        </div>
-                        
-                        <div className="flex gap-1.5 md:gap-2">
-                          <button 
-                            onClick={(e) => handleEditAddress(e, address)}
-                            className="p-1 md:p-1.5 rounded-lg bg-white border border-slate-100 text-slate-400 hover:text-brand-600 hover:border-brand-200 transition-all active:scale-95"
-                          >
-                            <Edit className="w-3 h-3 md:w-3.5 md:h-3.5" />
-                          </button>
-                          <button 
-                            onClick={(e) => handleDeleteAddress(e, address.id!)}
-                            className="p-1 md:p-1.5 rounded-lg bg-white border border-slate-100 text-slate-400 hover:text-red-500 hover:border-red-200 transition-all active:scale-95"
-                          >
-                            <X className="w-3 h-3 md:w-3.5 md:h-3.5" />
-                          </button>
-                        </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 px-4 sm:px-0">
+                {savedAddresses.map((address) => (
+                  <div 
+                    key={address.id}
+                    onClick={() => { setShippingAddress(address); setAddressError(false); }}
+                    className={cn(
+                      "group relative p-5 bento-card cursor-pointer transition-all duration-500 flex flex-col min-h-[160px] border",
+                      shippingAddress?.id === address.id 
+                        ? "border-brand-500 bg-brand-50/10 ring-4 ring-brand-500/10 shadow-xl" 
+                        : "hover:border-brand-200"
+                    )}
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className={cn(
+                        "px-2.5 py-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-colors",
+                        shippingAddress?.id === address.id ? "bg-brand-600 text-white" : "bg-slate-100 text-slate-400 group-hover:bg-brand-100"
+                      )}>
+                        {address.addressType}
                       </div>
-
-                      <div className="mb-3 md:mb-4 relative z-10">
-                        <p className="font-bold text-slate-900 text-[16px] md:text-[16px] leading-tight mb-0.5">{address.fullName}</p>
-                        <p className="text-[14px] md:text-[14px] font-semibold text-slate-500 truncate">{address.email}</p>
-                      </div>
-
-                      <p className="text-[14px] md:text-[14px] text-slate-500 font-semibold leading-relaxed mb-3 md:mb-4 flex-grow tracking-tight">
-                        {address.city}, {address.state} {address.pinCode}
-                      </p>
-                      
-                      <div className="mt-auto flex items-center justify-between pt-2.5 md:pt-3 border-t border-slate-50 relative z-10">
-                         <div className="flex items-center gap-1.5 md:gap-2 text-slate-500 font-bold text-[14px] md:text-[14px]">
-                           <Smartphone className="w-3 h-3 md:w-3.5 md:h-3.5" />
-                           <span>{address.phoneNumber}</span>
-                         </div>
-                         {selectedAddressId === address.id && (
-                            <div className="flex items-center gap-1.5 md:gap-2 text-brand-600 animate-in zoom-in slide-in-from-right-4 duration-500">
-                               <div className="w-4 h-4 md:w-5 md:h-5 bg-brand-600 rounded-full flex items-center justify-center shadow-lg shadow-brand-200">
-                                 <Check className="w-2.5 md:w-3 h-2.5 md:h-3 text-white stroke-[3]" />
-                               </div>
-                            </div>
-                         )}
+                      <div className={cn(
+                        "w-5 h-5 rounded-full border-2 transition-all flex items-center justify-center",
+                        shippingAddress?.id === address.id ? "border-brand-500 bg-brand-500 scale-110" : "border-slate-200"
+                      )}>
+                        {shippingAddress?.id === address.id && <Check className="w-3 h-3 text-white stroke-[4]" />}
                       </div>
                     </div>
-                  ))}
-                </div>
+
+                    <div className="flex-1 space-y-1">
+                      <p className="font-bold text-brand-950 text-base md:text-lg leading-tight tracking-tight">{address.fullName}</p>
+                      <p className="text-[13px] md:text-sm font-semibold text-slate-500 leading-relaxed max-w-[90%]">
+                        {address.city}, {address.state} {address.pinCode}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center justify-between mt-4 border-t border-brand-50/50 pt-3">
+                       <div className="flex items-center gap-1.5 text-slate-400 font-bold text-xs">
+                         <Smartphone className="w-3.5 h-3.5 text-brand-400" />
+                         <span>{address.phoneNumber}</span>
+                       </div>
+                       <div className="flex items-center gap-3">
+                         <button 
+                          onClick={(e) => { e.stopPropagation(); setEditingAddress(address); setShowAddressForm(true); }}
+                          className="text-[11px] font-bold text-brand-600 hover:text-brand-800 transition-colors uppercase tracking-widest"
+                         >
+                          Edit
+                         </button>
+                         <button 
+                          onClick={(e) => address.id && handleRemoveAddress(e, address.id)}
+                          className="text-[11px] font-bold text-red-500 hover:text-red-700 transition-colors uppercase tracking-widest flex items-center gap-1"
+                         >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          Remove
+                         </button>
+                       </div>
+                    </div>
+                  </div>
+                ))}
+                
+                {savedAddresses.length === 0 && !showAddressForm && (
+                   <div 
+                    onClick={() => setShowAddressForm(true)}
+                    className="col-span-full py-12 border-2 border-dashed border-brand-100 rounded-3xl flex flex-col items-center justify-center gap-4 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 hover:border-brand-500 transition-all cursor-pointer bg-white"
+                   >
+                      <div className="w-16 h-16 rounded-full bg-brand-50 flex items-center justify-center text-brand-400">
+                         <MapPin className="w-8 h-8" />
+                      </div>
+                      <p className="font-bold text-slate-500">No addresses saved yet</p>
+                      <button className="text-brand-600 font-bold text-sm underline underline-offset-4">Add your first address</button>
+                   </div>
+                )}
               </div>
             )}
           </section>
 
+          {/* Cart Section */}
           <section className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-            <div className="flex items-center justify-between mb-4 md:mb-6 px-4 sm:px-0">
-               <div className="flex items-center gap-2 md:gap-3">
-                 <div className="w-8 h-8 md:w-10 md:h-10 bg-slate-100 text-slate-600 rounded-lg md:rounded-xl flex items-center justify-center">
-                   <ShoppingBag className="w-4 h-4 md:w-5 md:h-5" />
+             <div className="flex items-center justify-between mb-6 md:mb-8 border-b border-brand-50 pb-4 px-4 sm:px-0">
+               <div className="flex items-center gap-3">
+                 <div className="w-10 h-10 bg-slate-100 text-slate-600 rounded-xl flex items-center justify-center shadow-sm">
+                   <ShoppingBag className="w-5 h-5 text-slate-500" />
                  </div>
-                 <h2 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">Review items</h2>
+                 <h2 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">Order Review</h2>
                </div>
-               <div className="px-2 py-0.5 md:px-3 md:py-1 bg-white border border-slate-200 rounded-full shadow-sm">
-                  <span className="text-[12px] md:text-[14px] font-semibold text-slate-500">
-                    {cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}
+               <div className="flex items-center gap-2 px-3 py-1 bg-white border border-brand-100 rounded-full shadow-sm">
+                  <span className="text-[12px] md:text-sm font-bold text-brand-800">
+                    {cartItems.length} {cartItems.length === 1 ? 'Eco-item' : 'Eco-items'}
                   </span>
                </div>
-            </div>
-            
-            <div className="space-y-3 md:space-y-4">
-              {cartItems.map((item) => (
-                <CartItem key={item.product_id} item={item} />
-              ))}
-            </div>
+             </div>
+             
+             <div className="space-y-4 md:space-y-6 px-4 sm:px-0">
+               {cartItems.map((item) => (
+                 <CartItem key={item.product_id} item={item} />
+               ))}
+             </div>
+          </section>
+
+          <section className="animate-fade-in-up px-4 sm:px-0" style={{ animationDelay: '0.3s' }}>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-5 bg-brand-50/50 rounded-3xl flex items-center gap-4 border border-brand-100/50">
+                    <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center">
+                        <Truck className="w-5 h-5 text-brand-600" />
+                    </div>
+                    <div>
+                        <p className="text-sm font-bold text-brand-950">Fast Shipping</p>
+                        <p className="text-xs font-semibold text-slate-500">Eco-conscious logistics</p>
+                    </div>
+                </div>
+                <div className="p-5 bg-emerald-50/50 rounded-3xl flex items-center gap-4 border border-emerald-100/50">
+                    <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center">
+                        <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <div>
+                        <p className="text-sm font-bold text-emerald-950">Secure Protection</p>
+                        <p className="text-xs font-semibold text-slate-500">Fully encrypted checkout</p>
+                    </div>
+                </div>
+             </div>
           </section>
         </div>
 
-        <div className="lg:col-span-4">
-          <div className="md:sticky md:top-28">
-            <OrderSummary />
-          </div>
+        <div className="lg:col-span-4 animate-fade-in-up md:sticky md:top-28" style={{ animationDelay: '0.4s' }}>
+          <OrderSummary />
         </div>
       </div>
 
-      {!showNewForm && (
-        <StickyFooter 
-          backLabel="Back to cart"
-          backHref="/"
-          nextLabel="Enter payment details"
-          onNext={handleProceedToPayment}
-          isNextDisabled={!selectedAddressId}
-        />
-      )}
+      <StickyFooter 
+        nextLabel="Continue to Payment"
+        onNext={handleContinue}
+        disabledNext={false} 
+      />
     </div>
   );
 }

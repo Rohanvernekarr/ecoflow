@@ -52,25 +52,31 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Nav Links */}
-          <div className="hidden lg:flex items-center gap-8 px-8 flex-1 justify-center">
+          <div className="hidden lg:flex items-center gap-6 px-4">
              {NAV_LINKS.map((link) => (
                <Link 
                  key={link.name} 
                  href={link.href}
-                 className="group flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-brand-900 transition-all relative py-1"
+                 className="group flex items-center gap-2 text-[13px] font-bold text-slate-500 hover:text-brand-900 transition-all relative py-1"
                >
-                 <span className="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all text-brand-600">
-                   {link.icon}
-                 </span>
                  {link.name}
                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-500 transition-all group-hover:w-full group-hover:left-0" />
                </Link>
              ))}
           </div>
 
-          {/* Search (Tablet+) */}
-          <div className="hidden md:flex lg:hidden flex-1 max-w-[200px]">
-             <Search className="w-5 h-5 text-slate-400" />
+          {/* Search Bar - Restored */}
+          <div className="hidden md:flex flex-1 max-w-sm mx-4">
+            <div className="relative w-full group">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <Search className="w-4 h-4 text-slate-400 group-focus-within:text-brand-500 transition-colors" />
+              </div>
+              <input
+                type="text"
+                className="block w-full pl-11 pr-4 py-2 bg-brand-50/40 border border-brand-100/50 text-slate-800 rounded-2xl leading-5 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-brand-500/10 focus:bg-white transition-all text-sm"
+                placeholder="Search eco products..."
+              />
+            </div>
           </div>
 
           {/* Right Section */}
@@ -88,7 +94,7 @@ export function Navbar() {
               <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-brand-500 rounded-full border-2 border-white scale-0 group-hover:scale-100 transition-transform" />
             </button>
 
-            <Link href="/cart" className="relative group p-2.5 bg-brand-50 hover:bg-brand-100 rounded-full transition-all duration-500">
+            <Link href="/" className="relative group p-2.5 bg-brand-50 hover:bg-brand-100 rounded-full transition-all duration-500">
               <ShoppingCart className="w-5 h-5 text-brand-700" />
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-brand-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white shadow-lg animate-scale-in">

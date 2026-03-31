@@ -10,9 +10,9 @@ export function CartItem({ item }: { item: CartItemType }) {
   const { updateQuantity, removeItem } = useCheckoutStore();
 
   return (
-    <div className="group relative flex flex-row items-center gap-4 p-4 md:p-6 bg-white border border-brand-100/50 rounded-3xl transition-all duration-500 hover:shadow-premium hover:border-brand-200/50">
+    <div className="group relative flex flex-row items-center gap-3 md:gap-4 p-3 md:p-4 bg-white border border-brand-100/50 rounded-2xl md:rounded-3xl transition-all duration-500 hover:shadow-premium hover:border-brand-200/50">
       
-      <div className="relative w-24 h-24 md:w-36 md:h-36 shrink-0 bg-brand-50/30 rounded-2xl overflow-hidden border border-brand-100/30">
+      <div className="relative w-20 h-20 md:w-28 md:h-28 shrink-0 bg-brand-50/30 rounded-xl md:rounded-2xl overflow-hidden border border-brand-100/30">
         <Image
           src={item.image}
           alt={item.product_name}
@@ -26,8 +26,8 @@ export function CartItem({ item }: { item: CartItemType }) {
 
       <div className="flex flex-col flex-1 gap-2 md:gap-4 min-w-0">
         <div className="flex justify-between items-start gap-2">
-          <div className="space-y-0.5 md:space-y-1 min-w-0">
-            <h3 className="text-[17px] md:text-[22px] font-bold text-brand-900 leading-tight tracking-tight hover:text-brand-600 transition-colors duration-300 truncate md:whitespace-normal">
+          <div className="space-y-0.5 min-w-0">
+            <h3 className="text-base md:text-lg font-bold text-brand-900 leading-tight tracking-tight hover:text-brand-600 transition-colors duration-300 truncate md:whitespace-normal">
               {item.product_name}
             </h3>
             <div className="flex items-center gap-1.5 md:gap-2">
@@ -42,7 +42,7 @@ export function CartItem({ item }: { item: CartItemType }) {
           </div>
           
           <div className="text-right shrink-0">
-            <p className="text-lg md:text-2xl font-bold text-brand-950 tracking-tighter">
+            <p className="text-base md:text-xl font-bold text-brand-950 tracking-tighter">
               ₹{item.product_price.toLocaleString("en-IN")}
             </p>
             {item.original_price && item.original_price > item.product_price && (
@@ -53,9 +53,9 @@ export function CartItem({ item }: { item: CartItemType }) {
           </div>
         </div>
 
-        <div className="flex items-center justify-between mt-auto pt-3 md:pt-4 border-t border-brand-50/50">
-          <div className="flex items-center gap-2 md:gap-3">
-             <div className="flex items-center p-1 bg-slate-50 rounded-xl border border-slate-100/50">
+        <div className="flex items-center justify-between mt-auto pt-1 border-t border-brand-50/50">
+          <div className="flex items-center gap-2">
+             <div className="flex items-center p-0.5 bg-slate-50 rounded-xl border border-slate-100/50">
                <button
                  onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
                  disabled={item.quantity <= 1}
@@ -63,9 +63,9 @@ export function CartItem({ item }: { item: CartItemType }) {
                >
                  <Minus className="w-3.5 h-3.5 md:w-4 md:h-4" />
                </button>
-               <span className="w-8 md:w-10 text-center text-xs md:text-sm font-bold text-slate-800">
-                 {item.quantity}
-               </span>
+                <span className="w-8 md:w-10 text-center text-xs md:text-sm font-bold text-slate-800">
+                  {item.quantity}
+                </span>
                <button
                  onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
                  className="p-1 md:p-1.5 text-slate-400 hover:text-brand-600 hover:bg-white rounded-lg transition-all active:scale-90"
@@ -81,7 +81,7 @@ export function CartItem({ item }: { item: CartItemType }) {
 
           <button
             onClick={() => removeItem(item.product_id)}
-            className="p-2.5 md:p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all duration-300 active:scale-95 group/del"
+            className="p-2 md:p-2.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all duration-300 active:scale-95 group/del"
           >
             <Trash2 className="w-4 h-4 md:w-5 md:h-5 group-hover/del:rotate-12 transition-transform" />
           </button>

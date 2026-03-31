@@ -1,10 +1,17 @@
 "use client";
 
-import { ShoppingCart, User, Search, MapPin, Bell, Leaf, Menu, X } from "lucide-react";
+import { ShoppingCart, User, Search, MapPin, Bell, Leaf, Menu, X, ChevronRight, Globe, Heart, Sprout, Store } from "lucide-react";
 import Link from "next/link";
 import { useCheckoutStore } from "@/store/useCheckoutStore";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+
+const NAV_LINKS = [
+  { name: "Shop", href: "/", icon: <Sprout className="w-4 h-4" /> },
+  { name: "Our Story", href: "#", icon: <Globe className="w-4 h-4" /> },
+  { name: "Sellers", href: "#", icon: <Store className="w-4 h-4" /> },
+  { name: "Impact", href: "#", icon: <Heart className="w-4 h-4" /> },
+];
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -26,7 +33,7 @@ export function Navbar() {
         <div 
           className={cn(
             "relative glass rounded-[2rem] px-4 md:px-8 py-3.5 flex items-center justify-between gap-4 transition-all duration-700",
-            isScrolled ? "scale-[0.98] shadow-premium" : "scale-100 shadow-soft"
+            isScrolled ? "scale-[0.98] shadow-premium bg-white/80" : "scale-100 shadow-soft bg-white/60"
           )}
         >
           {/* Logo */}
@@ -34,37 +41,50 @@ export function Navbar() {
             <div className="w-10 h-10 rounded-xl bg-brand-700 flex items-center justify-center text-white shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
               <Leaf className="w-5 h-5" />
             </div>
-            <span className="text-xl font-bold tracking-tight text-brand-900 hidden sm:block">
-              EcoYaan
-            </span>
+            <div className="flex flex-col -gap-1">
+               <span className="text-xl font-bold tracking-tight text-brand-900 leading-none hidden sm:block">
+                 EcoYaan
+               </span>
+               <span className="text-[9px] font-bold text-brand-600 uppercase tracking-widest hidden sm:block">
+                 Flow
+               </span>
+            </div>
           </Link>
 
-          {/* Search */}
-          <div className="hidden lg:flex flex-1 max-w-md mx-8">
-            <div className="relative w-full group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Search className="w-4 h-4 text-slate-400 group-focus-within:text-brand-500 transition-colors" />
-              </div>
-              <input
-                type="text"
-                className="block w-full pl-11 pr-4 py-2.5 bg-brand-50/30 border border-brand-100/50 text-slate-800 rounded-2xl leading-5 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-brand-500/10 focus:bg-white transition-all text-sm"
-                placeholder="Search premium eco-products..."
-              />
-            </div>
+          {/* Desktop Nav Links */}
+          <div className="hidden lg:flex items-center gap-8 px-8 flex-1 justify-center">
+             {NAV_LINKS.map((link) => (
+               <Link 
+                 key={link.name} 
+                 href={link.href}
+                 className="group flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-brand-900 transition-all relative py-1"
+               >
+                 <span className="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all text-brand-600">
+                   {link.icon}
+                 </span>
+                 {link.name}
+                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-500 transition-all group-hover:w-full group-hover:left-0" />
+               </Link>
+             ))}
+          </div>
+
+          {/* Search (Tablet+) */}
+          <div className="hidden md:flex lg:hidden flex-1 max-w-[200px]">
+             <Search className="w-5 h-5 text-slate-400" />
           </div>
 
           {/* Right Section */}
           <div className="flex items-center gap-1.5 md:gap-3 shrink-0">
-            
-            <div className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-full hover:bg-white/50 transition-colors cursor-pointer group">
+            <div className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-full hover:bg-brand-50 transition-colors cursor-pointer group">
               <MapPin className="w-4 h-4 text-slate-400 group-hover:text-brand-600 transition-colors" />
-              <span className="text-xs font-semibold text-slate-500 hidden xl:block">Bengaluru</span>
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest hidden xl:block">Bengaluru</span>
             </div>
 
             <div className="w-px h-6 bg-brand-100/50 mx-1 hidden sm:block" />
 
             <button className="p-2.5 text-slate-500 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-all relative group">
-              <Bell className="w-5 h-5" />
+              <Search className="md:hidden w-5 h-5" />
+              <Bell className="hidden md:block w-5 h-5" />
               <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-brand-500 rounded-full border-2 border-white scale-0 group-hover:scale-100 transition-transform" />
             </button>
 
@@ -77,15 +97,15 @@ export function Navbar() {
               )}
             </Link>
 
-            <button className="hidden sm:flex items-center gap-2 pl-2 pr-4 py-2 bg-slate-900 hover:bg-black text-white rounded-full transition-all shadow-lg active:scale-95 group">
+            <button className="hidden sm:flex items-center gap-2 pl-2 pr-4 py-2 bg-slate-900 hover:bg-black text-white rounded-full transition-all shadow-xl active:scale-95 group">
                <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center">
                   <User className="w-4 h-4" />
                </div>
-               <span className="text-xs font-bold">Account</span>
+               <span className="text-xs font-bold">Profile</span>
             </button>
             
             <button 
-              className="p-2 sm:hidden text-brand-900"
+              className="p-2.5 lg:hidden text-brand-900 bg-brand-50 hover:bg-brand-100 rounded-2xl transition-all"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -94,10 +114,50 @@ export function Navbar() {
         </div>
       </div>
       
-      {/* Mobile Menu Placeholder - Elegant Reveal */}
+      {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 top-[88px] bg-white/80 backdrop-blur-2xl z-40 p-6 flex flex-col gap-4 animate-fade-in sm:hidden pointer-events-auto">
-            {/* List links here */}
+        <div className="fixed inset-0 top-0 bg-brand-950/20 backdrop-blur-3xl z-40 p-6 flex flex-col pointer-events-auto sm:hidden animate-fade-in">
+            <div className="mt-28 space-y-4">
+               <p className="text-[10px] font-black text-brand-600 uppercase tracking-[0.3em] pl-4 mb-6">Discovery</p>
+               {NAV_LINKS.map((link, idx) => (
+                 <Link 
+                   key={link.name} 
+                   href={link.href}
+                   onClick={() => setIsMobileMenuOpen(false)}
+                   className="flex items-center justify-between p-5 bg-white/40 border border-white/20 rounded-[2rem] group transition-all animate-fade-in-up"
+                   style={{ animationDelay: `${idx * 0.1}s` }}
+                 >
+                   <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center text-brand-700 shadow-sm">
+                         {link.icon}
+                      </div>
+                      <span className="text-lg font-bold text-brand-950">{link.name}</span>
+                   </div>
+                   <ChevronRight className="w-5 h-5 text-brand-300 group-hover:translate-x-1 transition-transform" />
+                 </Link>
+               ))}
+            </div>
+
+            <div className="mt-auto pb-12 flex flex-col gap-4 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+                <div className="grid grid-cols-2 gap-4">
+                  <button className="flex flex-col items-center justify-center gap-2 p-5 bg-brand-900 text-white rounded-3xl font-bold active:scale-95 transition-transform">
+                     <User className="w-5 h-5" />
+                     <span className="text-[10px] uppercase tracking-widest">Account</span>
+                  </button>
+                  <button className="flex flex-col items-center justify-center gap-2 p-5 bg-white text-brand-900 rounded-3xl font-bold shadow-soft active:scale-95 transition-transform">
+                     <Bell className="w-5 h-5" />
+                     <span className="text-[10px] uppercase tracking-widest">Alerts</span>
+                  </button>
+                </div>
+                
+                <button 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="w-full py-4 bg-brand-50 text-brand-900 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 border border-brand-100 hover:bg-brand-100 transition-colors"
+                >
+                   <X className="w-4 h-4" />
+                   Close Concept Menu
+                </button>
+            </div>
         </div>
       )}
     </nav>

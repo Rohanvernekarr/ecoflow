@@ -102,21 +102,21 @@ export function PaymentPageContent() {
 
             <div className="bento-card bg-brand-900 text-white relative overflow-hidden group border-none">
                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/20 rounded-full blur-[80px] -mr-32 -mt-32 group-hover:bg-emerald-500/30 transition-colors duration-700" />
-               <div className="p-6 md:p-10 relative z-10">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+               <div className="p-5 md:p-7 relative z-10">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                     <div className="space-y-1">
-                        <p className="text-[10px] md:text-xs font-bold text-brand-600 uppercase tracking-widest mb-2 md:mb-4">Shipping to</p>
-                        <h3 className="text-xl md:text-3xl font-bold tracking-tight mb-2 text-white">{shippingAddress.fullName}</h3>
-                        <p className="text-sm md:text-lg font-semibold text-brand-600 leading-relaxed tracking-wide">
-                            {shippingAddress.city}, {shippingAddress.state} {shippingAddress.pinCode}
+                        <p className="text-[9px] md:text-[10px] font-bold text-brand-400 uppercase tracking-widest mb-1 md:mb-2 text-emerald-600">Shipping Destination</p>
+                        <h3 className="text-lg md:text-xl font-bold tracking-tight mb-1 text-white">{shippingAddress.fullName}</h3>
+                        <p className="text-xs md:text-sm font-semibold text-brand-600 leading-relaxed tracking-wide">
+                            {shippingAddress.city}, {shippingAddress.state}, {shippingAddress.pinCode}
                         </p>
                     </div>
                     <div className="flex flex-col justify-end md:items-end">
-                        <div className="flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/10 w-fit backdrop-blur-md">
-                            <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center">
-                                <Smartphone className="w-4 h-4 text-brand-600" />
+                        <div className="flex items-center gap-2.5 bg-white/5 p-2.5 rounded-xl border border-white/10 w-fit backdrop-blur-md">
+                            <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
+                                <Smartphone className="w-3.5 h-3.5 text-brand-600" />
                             </div>
-                            <span className="text-sm md:text-base font-bold tracking-wide text-brand-600">{shippingAddress.phoneNumber}</span>
+                            <span className="text-xs md:text-sm font-bold tracking-wide text-brand-600">{shippingAddress.phoneNumber}</span>
                         </div>
                     </div>
                   </div>
@@ -134,13 +134,13 @@ export function PaymentPageContent() {
               </div>
             </div>
             
-            <div className="flex flex-col md:grid md:grid-cols-3 gap-3 md:gap-4 px-4 sm:px-0">
+            <div className="flex flex-col md:grid md:grid-cols-3 gap-2.5 md:gap-3 px-4 sm:px-0">
               {paymentMethods.map((method) => (
                 <div 
                   key={method.id}
                   onClick={() => setSelectedMethod(method.id)}
                   className={cn(
-                    "group p-4 md:p-6 bento-card cursor-pointer transition-all duration-500 flex flex-row md:flex-col gap-4 md:gap-7 items-center md:items-start",
+                    "group p-2.5 md:p-3.5 bento-card cursor-pointer transition-all duration-500 flex flex-row md:flex-col gap-3 md:gap-4 items-center md:items-start",
                     selectedMethod === method.id 
                       ? "border-brand-500 bg-brand-50/20 ring-4 ring-brand-500/10 shadow-premium scale-[0.98]" 
                       : "hover:border-brand-200"
@@ -148,33 +148,33 @@ export function PaymentPageContent() {
                 >
                   <div className="flex justify-between items-start md:w-full shrink-0">
                     <div className={cn(
-                        "w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl flex items-center justify-center transition-all",
+                        "w-8 h-8 md:w-9 md:h-9 rounded-xl flex items-center justify-center transition-all",
                         selectedMethod === method.id ? "bg-brand-600 text-white shadow-lg" : "bg-brand-50/50 text-brand-300"
                       )}>
-                      <method.icon className="w-5 h-5 md:w-7 md:h-7" />
+                      <method.icon className="w-4 h-4 md:w-4.5 md:h-4.5" />
                     </div>
                     <div className={cn(
-                        "w-6 h-6 rounded-full border-2 transition-all items-center justify-center hidden md:flex",
+                        "w-5 h-5 rounded-full border-2 transition-all items-center justify-center hidden md:flex",
                         selectedMethod === method.id ? "border-brand-500 bg-brand-500" : "border-slate-200"
                       )}>
-                        {selectedMethod === method.id && <Check className="w-3.5 h-3.5 text-white stroke-[4]" />}
+                        {selectedMethod === method.id && <Check className="w-3 h-3 text-white stroke-[4]" />}
                     </div>
                   </div>
 
-                  <div className="flex-1 space-y-1">
-                    <p className="font-bold text-brand-950 tracking-tight text-base md:text-lg">
+                  <div className="flex-1 space-y-0.5">
+                    <p className="font-bold text-brand-950 tracking-tight text-[13px] md:text-sm">
                       {method.name}
                     </p>
-                    <p className="text-xs md:text-sm font-semibold text-slate-400 leading-tight">
+                    <p className="text-[10px] md:text-[11px] text-slate-400 leading-tight">
                       {method.description}
                     </p>
                   </div>
                   
                   <div className={cn(
-                      "w-6 h-6 rounded-full border-2 transition-all flex md:hidden items-center justify-center shrink-0",
+                      "w-5 h-5 rounded-full border-2 transition-all flex md:hidden items-center justify-center shrink-0",
                       selectedMethod === method.id ? "border-brand-500 bg-brand-500" : "border-slate-200"
                     )}>
-                      {selectedMethod === method.id && <Check className="w-3.5 h-3.5 text-white stroke-[4]" />}
+                      {selectedMethod === method.id && <Check className="w-3 h-3 text-white stroke-[4]" />}
                   </div>
                 </div>
               ))}
